@@ -114,7 +114,6 @@ async def websocket_consultation(room_id: str, websocket: WebSocket, db: Session
     try:
         while True:
             data = await websocket.receive_json()
-            # Save message to DB
             if consultation:
                 msg = Message(
                     consultation_id=consultation.id,
@@ -124,7 +123,6 @@ async def websocket_consultation(room_id: str, websocket: WebSocket, db: Session
                 )
                 db.add(msg)
                 db.commit()
-            # Broadcast to other person in room
             await manager.broadcast_room(room_id, data, sender=websocket)
     except WebSocketDisconnect:
         manager.disconnect_room(room_id, websocket)

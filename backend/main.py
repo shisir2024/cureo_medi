@@ -1,10 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 import uvicorn
 import os
+import pathlib
 from .orchestrator import run_pipeline
 from .agents import learn_agent, quiz_agent
 from .database import init_db
@@ -94,7 +95,18 @@ async def quiz(request: LearnRequest):
 
 
 # Serve frontend — must be mounted AFTER all API routes
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+from fastapi.responses import FileResponse
+import pathlib
+
+FRONTEND_DIR = pathlib.Path("frontend")
+
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    file = FRONTEND_DIR / full_path
+    if file.is_file():
+        return FileResponse(file)
+    # fallback to index.html for SPA routing
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
