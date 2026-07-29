@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cureo — AI Health Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="learn.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <img src="logo.png" alt="Cureo" class="logo-img" />
+      <div>
+        <h1>Cureo</h1>
+        <p class="subtitle">13-Agent AI Health Assistant</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="mode-assistant">🩺 Assistant</button>
+        <button class="mode-btn" id="mode-learn">🎓 Learn</button>
+      </div>
+      <button id="lang-btn" class="icon-btn">🌐 <span id="lang-label">EN</span></button>
+      <button id="pdf-btn" class="icon-btn">📄 Report</button>
+      <button id="sos-btn" class="sos-btn">🚨 SOS</button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- LEFT: CHAT -->
+    <div class="chat-panel">
+
+      <!-- AGENT STATUS BAR -->
+      <div id="agent-status" class="agent-status hidden">
+        <div class="agent-steps">
+          <span class="step" id="step-triage">🔍 Triage</span><span class="arrow">›</span>
+          <span class="step" id="step-symptom">🩺 Symptoms</span><span class="arrow">›</span>
+          <span class="step" id="step-diagnosis">🧬 Diagnosis</span><span class="arrow">›</span>
+          <span class="step" id="step-treatment">💊 Treatment</span><span class="arrow">›</span>
+          <span class="step" id="step-referral">🏥 Referral</span><span class="arrow">›</span>
+          <span class="step" id="step-heatmap">🗺️ Heatmap</span><span class="arrow">›</span>
+          <span class="step" id="step-health">❤️ Score</span><span class="arrow">›</span>
+          <span class="step" id="step-web">🕸️ Web</span><span class="arrow">›</span>
+          <span class="step" id="step-vitals">🌡️ Vitals</span><span class="arrow">›</span>
+          <span class="step" id="step-radar">📡 Radar</span><span class="arrow">›</span>
+          <span class="step" id="step-compare">🔬 Compare</span><span class="arrow">›</span>
+          <span class="step" id="step-report">📋 Report</span>
+        </div>
+      </div>
+
+      <div id="messages"></div>
+
+      <div class="input-area">
+        <form id="chat-form">
+          <textarea id="user-input" placeholder="Describe your symptoms in detail…" rows="2" required></textarea>
+          <button type="submit" id="send-btn">
+            <span class="send-label">Send</span>
+            <span class="send-icon">➤</span>
+          </button>
+        </form>
+        <p class="disclaimer-footer">🔒 Educational information only · Not a medical diagnosis</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: PANELS -->
+    <div class="side-panel">
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab active" data-tab="bodymap" title="Body Map">🫀<span class="tab-label"> Body</span></button>
+        <button class="tab" data-tab="score" title="Health Score">❤️<span class="tab-label"> Score</span></button>
+        <button class="tab" data-tab="radar" title="Risk Radar">📡<span class="tab-label"> Radar</span></button>
+        <button class="tab" data-tab="vitals" title="Vitals">🌡️<span class="tab-label"> Vitals</span></button>
+        <button class="tab" data-tab="compare" title="Compare">🔬<span class="tab-label"> Compare</span></button>
+        <button class="tab" data-tab="timeline" title="History">📅<span class="tab-label"> History</span></button>
+        <button class="tab" data-tab="confidence" title="Confidence">📊<span class="tab-label"> Confidence</span></button>
+      </div>
+
+      <div class="how-it-works-bar">
+        <button id="how-btn">ℹ️ How does this work?</button>
+      </div>
+
+      <!-- BODY MAP -->
+      <div class="tab-content active" id="tab-bodymap">
+        <p class="panel-hint">Click a body part to select · Auto-highlights from your symptoms</p>
+        <div class="body-map">
+          <svg viewBox="0 0 200 420" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="100" cy="40" rx="28" ry="32" class="body-part" data-part="head" data-symptom="head pain / headache"/>
+            <rect x="88" y="70" width="24" height="18" rx="4" class="body-part" data-part="neck" data-symptom="neck pain / stiff neck"/>
+            <rect x="65" y="88" width="70" height="70" rx="8" class="body-part" data-part="chest" data-symptom="chest pain / chest tightness"/>
+            <ellipse cx="55" cy="100" rx="16" ry="14" class="body-part" data-part="left-shoulder" data-symptom="left shoulder pain"/>
+            <ellipse cx="145" cy="100" rx="16" ry="14" class="body-part" data-part="right-shoulder" data-symptom="right shoulder pain"/>
+            <rect x="32" y="112" width="20" height="60" rx="8" class="body-part" data-part="left-arm" data-symptom="left arm pain"/>
+            <rect x="148" y="112" width="20" height="60" rx="8" class="body-part" data-part="right-arm" data-symptom="right arm pain"/>
+            <rect x="65" y="158" width="70" height="55" rx="8" class="body-part" data-part="abdomen" data-symptom="stomach pain / abdominal pain"/>
+            <ellipse cx="42" cy="185" rx="12" ry="16" class="body-part" data-part="left-hand" data-symptom="left hand pain"/>
+            <ellipse cx="158" cy="185" rx="12" ry="16" class="body-part" data-part="right-hand" data-symptom="right hand pain"/>
+            <rect x="65" y="213" width="70" height="30" rx="6" class="body-part" data-part="pelvis" data-symptom="pelvic pain / lower back pain"/>
+            <rect x="68" y="243" width="28" height="90" rx="8" class="body-part" data-part="left-leg" data-symptom="left leg pain"/>
+            <rect x="104" y="243" width="28" height="90" rx="8" class="body-part" data-part="right-leg" data-symptom="right leg pain"/>
+            <ellipse cx="82" cy="345" rx="18" ry="10" class="body-part" data-part="left-foot" data-symptom="left foot pain"/>
+            <ellipse cx="118" cy="345" rx="18" ry="10" class="body-part" data-part="right-foot" data-symptom="right foot pain"/>
+            <text x="100" y="44" class="body-label">Head</text>
+            <text x="100" y="82" class="body-label">Neck</text>
+            <text x="100" y="128" class="body-label">Chest</text>
+            <text x="100" y="188" class="body-label">Abdomen</text>
+            <text x="100" y="232" class="body-label">Pelvis</text>
+            <text x="82" y="292" class="body-label">L-Leg</text>
+            <text x="118" y="292" class="body-label">R-Leg</text>
+          </svg>
+        </div>
+        <div id="selected-parts" class="selected-parts"></div>
+      </div>
+
+      <!-- HEALTH SCORE -->
+      <div class="tab-content" id="tab-score">
+        <p class="panel-hint">Overall wellness score based on your symptoms</p>
+        <div id="score-container">
+          <p class="empty-state">💬 Start chatting to see your health score</p>
+        </div>
+      </div>
+
+      <!-- RADAR -->
+      <div class="tab-content" id="tab-radar">
+        <p class="panel-hint">Risk assessment across 5 dimensions</p>
+        <div id="radar-container">
+          <p class="empty-state">💬 Start chatting to see risk radar</p>
+        </div>
+      </div>
+
+      <!-- VITALS -->
+      <div class="tab-content" id="tab-vitals">
+        <p class="panel-hint">Vital signs extracted from your description</p>
+        <div id="vitals-container">
+          <p class="empty-state">💬 Mention vitals like temperature or heart rate</p>
+        </div>
+      </div>
+
+      <!-- COMPARISON -->
+      <div class="tab-content" id="tab-compare">
+        <p class="panel-hint">Side-by-side condition comparison</p>
+        <div id="compare-container">
+          <p class="empty-state">💬 Start chatting to compare conditions</p>
+        </div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="tab-content" id="tab-timeline">
+        <p class="panel-hint">Symptom progression across your conversation</p>
+        <div id="timeline-container">
+          <p class="empty-state">💬 Start chatting to track symptoms over time</p>
+        </div>
+      </div>
+
+      <!-- CONFIDENCE -->
+      <div class="tab-content" id="tab-confidence">
+        <p class="panel-hint">Likelihood of possible conditions</p>
+        <div id="confidence-container">
+          <p class="empty-state">💬 Start chatting to see condition likelihood</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- LEARN MODE -->
+<div id="learn-mode" class="learn-mode hidden">
+
+  <!-- SEARCH BAR -->
+  <div class="learn-search-wrap">
+    <div class="learn-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="learn-input" placeholder="Search any medical topic... e.g. RAAS pathway, cranial nerves, myocardial infarction" />
+      <button id="learn-search-btn">Search</button>
+    </div>
+    <div class="subject-chips">
+      <button class="subject-chip" data-subject="Anatomy">🦴 Anatomy</button>
+      <button class="subject-chip" data-subject="Physiology">❤️ Physiology</button>
+      <button class="subject-chip" data-subject="Pharmacology">💊 Pharmacology</button>
+      <button class="subject-chip" data-subject="Pathology">🧬 Pathology</button>
+      <button class="subject-chip" data-subject="Biochemistry">🧪 Biochemistry</button>
+      <button class="subject-chip" data-subject="Microbiology">🦠 Microbiology</button>
+      <button class="subject-chip" data-subject="Medicine">🏥 Medicine</button>
+      <button class="subject-chip" data-subject="Surgery">💉 Surgery</button>
+    </div>
+  </div>
+
+  <div class="learn-body">
+
+    <!-- LEFT: RESULT -->
+    <div class="learn-result-panel">
+      <div id="learn-empty" class="learn-empty">
+        <div class="learn-empty-icon">🎓</div>
+        <h2>Welcome to Cureo Learn</h2>
+        <p>Search any medical topic to get a structured explanation, key points, mnemonics, and a quiz — designed for NEET &amp; MBBS students.</p>
+        <div class="popular-topics">
+          <p class="popular-label">Popular topics:</p>
+          <div class="popular-chips">
+            <button class="popular-chip" data-topic="Action potential">Action potential</button>
+            <button class="popular-chip" data-topic="RAAS pathway">RAAS pathway</button>
+            <button class="popular-chip" data-topic="Cranial nerves">Cranial nerves</button>
+            <button class="popular-chip" data-topic="Cardiac cycle">Cardiac cycle</button>
+            <button class="popular-chip" data-topic="DNA replication">DNA replication</button>
+            <button class="popular-chip" data-topic="Brachial plexus">Brachial plexus</button>
+            <button class="popular-chip" data-topic="Insulin mechanism">Insulin mechanism</button>
+            <button class="popular-chip" data-topic="Blood coagulation">Blood coagulation</button>
+            <button class="popular-chip" data-topic="Nephron function">Nephron function</button>
+            <button class="popular-chip" data-topic="Krebs cycle">Krebs cycle</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="learn-result" class="learn-result hidden">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <!-- RIGHT: SIDEBAR -->
+    <div class="learn-sidebar">
+
+      <!-- BOOKMARKS -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">🔖 Bookmarks</div>
+        <div id="bookmarks-list">
+          <p class="sidebar-empty">No bookmarks yet</p>
+        </div>
+      </div>
+
+      <!-- RECENT -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">🕒 Recent Searches</div>
+        <div id="recent-list">
+          <p class="sidebar-empty">No recent searches</p>
+        </div>
+      </div>
+
+      <!-- FLASHCARDS -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">📝 Flashcards <span id="flashcard-count" class="fc-count">0</span></div>
+        <div id="flashcards-list">
+          <p class="sidebar-empty">Save key points as flashcards</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS MODAL -->
+<div id="how-modal" class="modal hidden">
+  <div class="modal-box how-box">
+    <div class="modal-header">
+      <h2>✦ How Cureo Works</h2>
+      <p>Your symptoms pass through 12 specialized AI agents in sequence</p>
+    </div>
+    <div class="how-pipeline">
+      <div class="how-step"><span class="how-num">1</span><div><strong>🔍 Triage Agent</strong> — Instantly checks for life-threatening emergencies. Triggers SOS alert if needed.</div></div>
+      <div class="how-step"><span class="how-num">2</span><div><strong>🩺 Symptom Analyzer</strong> — Extracts all symptoms and maps them to body parts for the 🫀 Body tab.</div></div>
+      <div class="how-step"><span class="how-num">3</span><div><strong>🧬 Diagnosis Agent</strong> — Suggests possible conditions with High / Medium / Low likelihood for 📊 Confidence bars.</div></div>
+      <div class="how-step"><span class="how-num">4</span><div><strong>💊 Treatment Agent</strong> — Recommends safe home care steps and warning signs to watch for.</div></div>
+      <div class="how-step"><span class="how-num">5</span><div><strong>🏥 Referral Agent</strong> — Decides which specialist to visit and how urgently.</div></div>
+      <div class="how-step"><span class="how-num">6</span><div><strong>🗺️ Heatmap Agent</strong> — Assigns pain intensity 1–10 to each body part, shown as heat colors on the body map.</div></div>
+      <div class="how-step"><span class="how-num">7</span><div><strong>❤️ Health Score Agent</strong> — Calculates a 0–100 wellness score shown as a gauge in the ❤️ Score tab.</div></div>
+      <div class="how-step"><span class="how-num">8</span><div><strong>🕸️ Symptom Web Agent</strong> — Maps connections between symptoms and conditions (used internally for context).</div></div>
+      <div class="how-step"><span class="how-num">9</span><div><strong>🌡️ Vitals Agent</strong> — Extracts temperature, heart rate, BP, O₂ and flags Normal / High / Low in the 🌡️ Vitals tab.</div></div>
+      <div class="how-step"><span class="how-num">10</span><div><strong>📡 Radar Agent</strong> — Scores 5 risk dimensions: Severity, Duration, Symptom Count, Emergency Risk, Age Risk.</div></div>
+      <div class="how-step"><span class="how-num">11</span><div><strong>🔬 Comparison Agent</strong> — Side-by-side comparison of top conditions with matching vs non-matching symptoms.</div></div>
+      <div class="how-step"><span class="how-num">12</span><div><strong>📋 Report Agent</strong> — Assembles all outputs into the final structured response shown in chat.</div></div>
+    </div>
+    <p class="how-disclaimer">All 12 agents run in sequence in ~10 seconds · Powered by Mistral AI</p>
+    <button class="close-modal" id="close-how">Close</button>
+  </div>
+</div>
+
+<!-- SOS MODAL -->
+<div id="sos-modal" class="modal hidden">
+  <div class="modal-box emergency-box">
+    <h2>🚨 Emergency Help</h2>
+    <p>If this is a life-threatening emergency, call immediately:</p>
+    <div class="sos-numbers">
+      <a href="tel:112" class="sos-call">📞 112 — Emergency</a>
+      <a href="tel:102" class="sos-call">🚑 102 — Ambulance</a>
+      <a href="tel:101" class="sos-call">🔥 101 — Fire</a>
+      <a href="tel:100" class="sos-call">👮 100 — Police</a>
+    </div>
+    <button id="find-hospitals-btn" class="find-btn">📍 Find Nearby Hospitals</button>
+    <div id="hospital-list"></div>
+    <button class="close-modal" id="close-sos">Close</button>
+  </div>
+</div>
+
+<!-- LANGUAGE MODAL -->
+<div id="lang-modal" class="modal hidden">
+  <div class="modal-box">
+    <h2>🌐 Select Language</h2>
+    <div class="lang-grid">
+      <button class="lang-option active" data-lang="en">🇺🇸 English</button>
+      <button class="lang-option" data-lang="hi">🇮🇳 Hindi</button>
+      <button class="lang-option" data-lang="es">🇪🇸 Spanish</button>
+      <button class="lang-option" data-lang="fr">🇫🇷 French</button>
+      <button class="lang-option" data-lang="ar">🇸🇦 Arabic</button>
+      <button class="lang-option" data-lang="zh">🇨🇳 Chinese</button>
+    </div>
+    <button class="close-modal" id="close-lang">Close</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script src="learn.js"></script>
+</body>
+</html>

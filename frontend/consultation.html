@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cureo — Consultation Room</title>
+  <link rel="stylesheet" href="consultation.css"/>
+</head>
+<body>
+  <div class="room">
+
+    <!-- Header -->
+    <header class="room-header">
+      <div class="header-left">
+        <img src="logo.png" alt="Cureo" class="logo"/>
+        <span>Consultation Room</span>
+        <span id="room-with" style="font-size:0.8rem;color:#64748b;"></span>
+      </div>
+      <div class="header-right">
+        <span id="connStatus" class="conn-status connecting">⏳ Connecting...</span>
+        <button class="btn-end" onclick="endConsultation()">End Consultation</button>
+      </div>
+    </header>
+
+    <!-- Room Body -->
+    <div class="room-body">
+
+      <!-- Video Panel -->
+      <div class="video-panel">
+        <div class="video-box">
+          <video id="remoteVideo" autoplay playsinline></video>
+          <div class="video-label" id="remoteLabel">⏳ Waiting...</div>
+        </div>
+        <div class="video-box local-box">
+          <video id="localVideo" autoplay playsinline muted></video>
+          <div class="video-label" id="localLabel">You</div>
+        </div>
+        <div class="video-controls">
+          <button class="ctrl-btn" id="micBtn" onclick="toggleMic()">🎤 Mute</button>
+          <button class="ctrl-btn" id="camBtn" onclick="toggleCam()">📷 Hide Cam</button>
+        </div>
+      </div>
+
+      <!-- Chat + Info Panel -->
+      <div class="chat-panel">
+
+        <!-- Symptom Summary -->
+        <div class="symptom-summary" id="symptomSummary" style="display:none">
+          <h4>📋 Patient Symptoms</h4>
+          <p id="symptomText"></p>
+        </div>
+
+        <!-- Chat -->
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="chat-input">
+          <input type="text" id="msgInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()"/>
+          <button onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="consultation.js"></script>
+</body>
+</html>

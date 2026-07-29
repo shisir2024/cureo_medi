@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cureo — Doctor Dashboard</title>
+  <link rel="stylesheet" href="doctor.css"/>
+</head>
+<body>
+  <div class="dashboard">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <img src="logo.png" alt="Cureo" class="logo"/>
+        <div>
+          <h1>Cureo</h1>
+          <span class="role-badge">Doctor Portal</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="doctor-info">
+          <span id="doctorName">Dr. Loading...</span>
+          <span id="doctorSpec" class="spec"></span>
+        </div>
+        <button id="statusBtn" class="status-btn offline" onclick="toggleStatus()">🔴 Go Online</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main">
+
+      <!-- Incoming Requests -->
+      <section class="section">
+        <div class="section-header">
+          <h2>Incoming Patient Requests</h2>
+          <span id="requestCount" class="badge">0</span>
+        </div>
+        <div id="requestsContainer" class="requests-container">
+          <div class="empty-state">
+            <span>🟡</span>
+            <p>No pending requests. Go online to receive patient requests.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Active Consultation -->
+      <section class="section" id="activeSection" style="display:none">
+        <div class="section-header">
+          <h2>Active Consultation</h2>
+          <span class="badge active-badge">Live</span>
+        </div>
+        <div id="activeConsultation" class="active-card">
+          <p id="activePatientName" class="active-patient"></p>
+          <p id="activeSymptoms" class="active-symptoms"></p>
+          <button class="btn-join" onclick="joinConsultation()">Join Consultation Room</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="doctor.js"></script>
+</body>
+</html>
