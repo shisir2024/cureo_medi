@@ -14,6 +14,15 @@ from .routers import auth_routes, doctor_routes, consult_routes
 app = FastAPI(title="Cureo", version="2.0.0")
 init_db()
 
+# Reset all doctors to offline on every server start
+@app.on_event("startup")
+def reset_doctors_online():
+    from .database import SessionLocal, Doctor
+    db = SessionLocal()
+    db.query(Doctor).update({"is_online": False})
+    db.commit()
+    db.close()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

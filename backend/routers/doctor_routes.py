@@ -71,6 +71,11 @@ def login(req: DoctorLoginRequest, db: Session = Depends(get_db)):
     return {"token": token, "role": "doctor", "name": doctor.name, "specialization": doctor.specialization}
 
 
+@router.get("/me")
+def get_me(doctor: Doctor = Depends(get_current_doctor)):
+    return {"id": doctor.id, "name": doctor.name, "is_online": doctor.is_online, "specialization": doctor.specialization}
+
+
 @router.put("/status")
 def toggle_status(db: Session = Depends(get_db), doctor: Doctor = Depends(get_current_doctor)):
     doctor.is_online = not doctor.is_online

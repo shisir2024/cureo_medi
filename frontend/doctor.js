@@ -13,6 +13,29 @@ let activeRoom = null;
 let activeConsultationId = null;
 let pollInterval = null;
 
+// On page load — force doctor offline in DB to fix stale online status
+async function initStatus() {
+  try {
+    const res = await fetch('/api/doctor/me', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    // If DB says online, reset to offline on fresh page load
+    if (data.is_online) {
+      await fetch('/api/doctor/status', {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    }
+    isOnline = false;
+    updateStatusBtn();
+  } catch {
+    isOnline = false;
+    updateStatusBtn();
+  }
+}
+initStatus();
+
 async function toggleStatus() {
   const btn = document.getElementById('statusBtn');
   btn.disabled = true;
