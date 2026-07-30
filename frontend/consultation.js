@@ -40,9 +40,11 @@ ws.onmessage = (e) => {
     appendMsg(data.name + ' joined the room', 'system');
     // Doctor creates offer once patient has joined and peerConnection is ready
     if (role === 'doctor' && peerConnection) {
-      peerConnection.createOffer()
-        .then(offer => peerConnection.setLocalDescription(offer))
-        .then(() => ws.send(JSON.stringify({ type: 'offer', offer: peerConnection.localDescription, name: displayName, role })));
+      setTimeout(() => {
+        peerConnection.createOffer()
+          .then(offer => peerConnection.setLocalDescription(offer))
+          .then(() => ws.send(JSON.stringify({ type: 'offer', offer: peerConnection.localDescription, name: displayName, role })));
+      }, 500);
     }
   } else if (data.type === 'system') {
     appendMsg(data.content, 'system');
@@ -89,20 +91,32 @@ const iceServers = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
     {
-      urls: 'turn:openrelay.metered.ca:80',
+      urls: [
+        'turn:openrelay.metered.ca:80',
+        'turn:openrelay.metered.ca:80?transport=tcp',
+        'turn:openrelay.metered.ca:443',
+        'turn:openrelay.metered.ca:443?transport=tcp'
+      ],
       username: 'openrelayproject',
       credential: 'openrelayproject'
     },
     {
-      urls: 'turn:openrelay.metered.ca:443',
-      username: 'openrelayproject',
-      credential: 'openrelayproject'
+      urls: 'turn:relay.metered.ca:80',
+      username: 'e8dd65f0f9c5d015e9c7a1c0',
+      credential: 'uMQFEgDqFHKGmSP8'
     },
     {
-      urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-      username: 'openrelayproject',
-      credential: 'openrelayproject'
+      urls: 'turn:relay.metered.ca:443',
+      username: 'e8dd65f0f9c5d015e9c7a1c0',
+      credential: 'uMQFEgDqFHKGmSP8'
+    },
+    {
+      urls: 'turn:relay.metered.ca:443?transport=tcp',
+      username: 'e8dd65f0f9c5d015e9c7a1c0',
+      credential: 'uMQFEgDqFHKGmSP8'
     }
   ]
 };
@@ -136,7 +150,7 @@ function setupPeerConnection() {
   if (role === 'doctor') {
     setTimeout(() => {
       ws.send(JSON.stringify({ type: 'join', role, name: displayName }));
-    }, 500);
+    }, 1000);
   }
 }
 
