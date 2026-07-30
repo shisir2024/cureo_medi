@@ -9,7 +9,7 @@ import pathlib
 from .orchestrator import run_pipeline
 from .agents import learn_agent, quiz_agent
 from .database import init_db
-from .routers import auth_routes, doctor_routes, consult_routes
+from .routers import auth_routes, doctor_routes, consult_routes, agent_routes
 
 app = FastAPI(title="Cureo", version="2.0.0")
 init_db()
@@ -77,6 +77,7 @@ async def health():
 app.include_router(auth_routes.router)
 app.include_router(doctor_routes.router)
 app.include_router(consult_routes.router)
+app.include_router(agent_routes.router)
 
 
 class LearnRequest(BaseModel):
